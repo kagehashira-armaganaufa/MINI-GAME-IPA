@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPA Kelas 9 - Interactive Lab</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:
+      radial-gradient(circle at 20% 20%,#243b72 0,transparent 30%),
+      radial-gradient(circle at 80% 80%,#5b247a 0,transparent 30%),
+      linear-gradient(135deg,#07111f,#111936,#090d1d);
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    padding:35px 20px;
+    text-align:center;
+    background:rgba(0,0,0,.25);
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+header h1{
+    font-size:clamp(30px,7vw,55px);
+    margin-bottom:10px;
+}
+
+header p{
+    color:#cbd5ff;
+}
+
+.container{
+    width:min(1050px,94%);
+    margin:auto;
+    padding:20px 0 60px;
+}
+
+.nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:12px 0;
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(7,11,28,.9);
+    backdrop-filter:blur(10px);
+}
+
+.nav button{
+    white-space:nowrap;
+    border:0;
+    padding:11px 16px;
+    border-radius:20px;
+    background:#202b4e;
+    color:white;
+    cursor:pointer;
+}
+
+.nav button:hover{
+    background:#4256a3;
+}
+
+.card{
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:22px;
+    padding:22px;
+    margin:18px 0;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.card h3{
+    margin:15px 0 8px;
+    color:#9edcff;
+}
+
+ul{
+    padding-left:20px;
+    line-height:1.7;
+}
+
+.topic{
+    display:none;
+}
+
+.topic.active{
+    display:block;
+    animation:fade .4s;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.info{
+    background:rgba(80,130,255,.12);
+    border-left:4px solid #65a8ff;
+    padding:14px;
+    border-radius:10px;
+    margin:12px 0;
+}
+
+.formula{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    padding:20px;
+    background:#080d20;
+    border-radius:15px;
+    margin:15px 0;
+}
+
+button.action{
+    border:0;
+    border-radius:13px;
+    padding:12px 18px;
+    margin:5px;
+    cursor:pointer;
+    background:#4169e1;
+    color:white;
+    font-weight:bold;
+}
+
+button.action:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.15);
+}
+
+.quiz-question{
+    margin:20px 0;
+    padding:18px;
+    background:rgba(0,0,0,.2);
+    border-radius:15px;
+}
+
+.option{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin:8px 0;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #39476d;
+    background:#151d38;
+    color:white;
+    cursor:pointer;
+}
+
+.option:hover{
+    background:#273660;
+}
+
+.correct{
+    background:#176b46 !important;
+}
+
+.wrong{
+    background:#762d3a !important;
+}
+
+.score{
+    font-size:24px;
+    font-weight:bold;
+    text-align:center;
+    padding:15px;
+}
+
+.progress{
+    height:10px;
+    background:#202943;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress div{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#55d6ff,#a855f7);
+    transition:.4s;
+}
+
+/* MINI GAME */
+
+.game{
+    text-align:center;
+}
+
+#cellGame{
+    position:relative;
+    height:300px;
+    overflow:hidden;
+    border-radius:20px;
+    background:
+      radial-gradient(circle,#1d3264 1px,transparent 1px);
+    background-size:25px 25px;
+    border:2px solid #3c5790;
+}
+
+.cell{
+    position:absolute;
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#55d6ff 15%,#2755d8 45%,#101c55 70%);
+    box-shadow:0 0 25px #43c8ff;
+    cursor:pointer;
+}
+
+.hidden{
+    display:none !important;
+}
+
+.memory-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    max-width:500px;
+    margin:15px auto;
+}
+
+.memory-card{
+    height:70px;
+    border:0;
+    border-radius:12px;
+    background:#26335b;
+    color:white;
+    font-size:25px;
+    cursor:pointer;
+}
+
+.memory-card.open{
+    background:#516ac1;
+}
+
+.drag-area{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    margin:15px 0;
+}
+
+.drag-item{
+    padding:12px;
+    background:#273b72;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.drop-zone{
+    min-height:80px;
+    border:2px dashed #6679b7;
+    border-radius:15px;
+    padding:20px;
+    margin-top:15px;
+}
+
+#secret{
+    text-align:center;
+    padding:20px;
+    font-size:18px;
+    min-height:100px;
+}
+
+footer{
+    text-align:center;
+    opacity:.6;
+    padding:30px;
+}
+
+@media(max-width:600px){
+    .memory-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .memory-card{
+        height:60px;
+        font-size:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🧬 IPA 9 INTERACTIVE LAB</h1>
+    <p>Belajar IPA kelas 9 sambil bermain 🚀</p>
+</header>
+
+<div class="container">
+
+<nav class="nav">
+    <button onclick="showTopic('home')">🏠 Home</button>
+    <button onclick="showTopic('bab1')">🧬 Pertumbuhan</button>
+    <button onclick="showTopic('bab2')">🧠 Koordinasi</button>
+    <button onclick="showTopic('bab3')">⚖️ Tekanan</button>
+    <button onclick="showTopic('bab4')">👁️ Indera</button>
+    <button onclick="showTopic('quiz')">📝 Quiz</button>
+    <button onclick="showTopic('games')">🎮 Games</button>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="topic active">
+
+<div class="card">
+    <h2>🔬 Selamat Datang di Laboratorium IPA!</h2>
+    <p>
+        Website ini berisi rangkuman materi IPA kelas 9 lengkap dengan
+        quiz, mini game, memory game, hidden game dan beberapa easter egg.
+    </p>
+
+    <div class="info">
+        💡 <b>Misi:</b> Kumpulkan skor sebanyak mungkin dengan menjawab
+        pertanyaan dan menyelesaikan mini-game.
+    </div>
+
+    <div class="score">
+        ⭐ Skor Kamu: <span id="score">0</span>
+    </div>
+
+    <div class="progress">
+        <div id="progress"></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🎯 Cara Bermain</h2>
+    <ul>
+        <li>Baca materi setiap bab.</li>
+        <li>Kerjakan quiz.</li>
+        <li>Mainkan semua mini-game.</li>
+        <li>Cari hidden game.</li>
+        <li>Kumpulkan skor setinggi mungkin.</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>🔮 Laboratorium Rahasia</h2>
+    <p>Klik tombol di bawah sebanyak 5 kali...</p>
+    <button class="action" onclick="secretClick()">🧪 Eksperimen</button>
+    <p id="secretText"></p>
+</div>
+
+</section>
+
+
+<!-- BAB 1 -->
+<section id="bab1" class="topic">
+
+<div class="card">
+<h2>🧬 1. Pertumbuhan & Perkembangan</h2>
+
+<h3>🔬 Fase Embrionik</h3>
+
+<ul>
+<li><b>Morula:</b> bola sel padat hasil pembelahan sel.</li>
+<li><b>Blastula:</b> bola sel yang mulai memiliki rongga.</li>
+<li><b>Gastrula:</b> terbentuk tiga lapisan embrional.</li>
+<li><b>Organogenesis:</b> proses pembentukan organ tubuh.</li>
+</ul>
+
+<h3>🧫 Tiga Lapisan Embrional</h3>
+
+<ul>
+<li><b>Ektoderm:</b> antara lain berkembang menjadi kulit dan sistem saraf.</li>
+<li><b>Mesoderm:</b> antara lain berkembang menjadi otot dan tulang.</li>
+<li><b>Endoderm:</b> antara lain berkembang menjadi bagian sistem pencernaan.</li>
+</ul>
+
+<h3>🦋 Metamorfosis Sempurna</h3>
+
+<div class="formula">
+Telur → Larva → Pupa → Imago
+</div>
+
+<p>Contoh: kupu-kupu dan nyamuk.</p>
+
+<h3>🦗 Metamorfosis Tidak Sempurna</h3>
+
+<div class="formula">
+Telur → Nimfa → Imago
+</div>
+
+<p>Contoh: belalang dan kecoak.</p>
+
+<div class="info">
+⚡ Perbedaan utama: metamorfosis sempurna memiliki tahap <b>pupa</b>,
+sedangkan metamorfosis tidak sempurna tidak memiliki pupa.
+</div>
+
+<h3>👦 Pubertas</h3>
+
+<p>
+Pubertas adalah masa ketika tubuh mengalami perubahan menuju kematangan
+seksual yang dipengaruhi oleh hormon.
+</p>
+
+</div>
+</section>
+
+
+<!-- BAB 2 -->
+<section id="bab2" class="topic">
+
+<div class="card">
+<h2>🧠 2. Sistem Koordinasi, Reproduksi & Homeostasis</h2>
+
+<h3>⚡ Sistem Saraf</h3>
+<p>
+Sistem saraf menerima rangsangan dan menghasilkan respons secara cepat
+melalui neuron.
+</p>
+
+<h3>🧪 Sistem Hormon</h3>
+<p>
+Sistem endokrin menggunakan hormon yang diedarkan melalui darah untuk
+mengatur berbagai fungsi tubuh.
+</p>
+
+<div class="info">
+⚡ Saraf → respons relatif cepat.<br>
+🧪 Hormon → efek umumnya lebih lambat dan dapat berlangsung lebih lama.
+</div>
+
+<h3>♂️ Sistem Reproduksi Laki-laki</h3>
+<ul>
+<li>Testis → menghasilkan sperma dan testosteron.</li>
+<li>Vas deferens → menyalurkan sperma.</li>
+<li>Skrotum → melindungi dan membantu mengatur suhu testis.</li>
+<li>Penis → organ reproduksi dan saluran keluarnya urine.</li>
+</ul>
+
+<h3>♀️ Sistem Reproduksi Perempuan</h3>
+<ul>
+<li>Ovarium → menghasilkan ovum.</li>
+<li>Tuba falopi → tempat umum terjadinya fertilisasi.</li>
+<li>Uterus → tempat perkembangan embrio/janin.</li>
+</ul>
+
+<h3>⚖️ Homeostasis</h3>
+<p>
+Homeostasis adalah kemampuan tubuh mempertahankan kondisi internal agar
+tetap relatif stabil.
+</p>
+
+<div class="info">
+🌡️ Panas → tubuh berkeringat.<br>
+❄️ Dingin → tubuh dapat menggigil untuk membantu menghasilkan panas.
+</div>
+
+</div>
+</section>
+
+
+<!-- BAB 3 -->
+<section id="bab3" class="topic">
+
+<div class="card">
+<h2>⚖️ 3. Tekanan pada Zat Padat</h2>
+
+<p>
+Tekanan adalah besarnya gaya yang bekerja pada setiap satuan luas bidang.
+</p>
+
+<div class="formula">
+P = F / A
+</div>
+
+<ul>
+<li><b>P</b> = tekanan (Pa)</li>
+<li><b>F</b> = gaya (N)</li>
+<li><b>A</b> = luas permukaan (m²)</li>
+</ul>
+
+<h3>📈 Hubungan Variabel</h3>
+
+<div class="info">
+Semakin besar gaya → tekanan semakin besar.
+</div>
+
+<div class="info">
+Semakin kecil luas bidang → tekanan semakin besar.
+</div>
+
+<h3>🔨 Contoh</h3>
+
+<ul>
+<li>Paku dibuat runcing agar tekanannya besar.</li>
+<li>Pisau diasah tajam agar tekanan pada bidang potong besar.</li>
+<li>Kaki bebek lebar agar tekanan pada tanah/lumpur lebih kecil.</li>
+</ul>
+
+</div>
+
+<div class="card">
+<h2>🧮 Kalkulator Tekanan</h2>
+
+<input id="force" type="number" placeholder="Gaya (N)"
+style="padding:12px;border-radius:10px;border:0;width:100%;margin:5px 0">
+
+<input id="area" type="number" placeholder="Luas (m²)"
+style="padding:12px;border-radius:10px;border:0;width:100%;margin:5px 0">
+
+<button class="action" onclick="calculatePressure()">Hitung</button>
+
+<h3 id="pressureResult"></h3>
+</div>
+
+</section>
+
+
+<!-- BAB 4 -->
+<section id="bab4" class="topic">
+
+<div class="card">
+<h2>👁️ 4. Sistem Indera Manusia</h2>
+
+<h3>👁️ Mata</h3>
+
+<ul>
+<li>Kornea → meneruskan dan membantu membiaskan cahaya.</li>
+<li>Iris → mengatur besar-kecil pupil.</li>
+<li>Pupil → tempat masuk cahaya.</li>
+<li>Lensa → memfokuskan cahaya.</li>
+<li>Retina → menerima rangsang cahaya.</li>
+<li>Saraf optik → membawa informasi visual ke otak.</li>
+</ul>
+
+<h3>👂 Telinga</h3>
+
+<ul>
+<li>Daun & saluran telinga → menangkap suara.</li>
+<li>Gendang telinga → menerima getaran.</li>
+<li>Martil, landasan, sanggurdi → meneruskan/memperkuat getaran.</li>
+<li>Koklea → mengubah getaran menjadi impuls saraf.</li>
+<li>Saluran semisirkularis → membantu keseimbangan.</li>
+<li>Tuba Eustachius → membantu menyamakan tekanan.</li>
+</ul>
+
+<h3>👃 Hidung</h3>
+
+<p>
+Epitel olfaktori memiliki reseptor yang menerima rangsang kimia berupa bau.
+</p>
+
+<h3>👅 Lidah</h3>
+
+<p>
+Papila pada lidah mengandung tunas pengecap yang membantu mendeteksi rasa.
+Lima rasa dasar: manis, asin, asam, pahit, dan umami.
+</p>
+
+<h3>🖐️ Kulit</h3>
+
+<ul>
+<li>Epidermis → lapisan pelindung luar.</li>
+<li>Dermis → mengandung pembuluh darah, kelenjar, dan reseptor.</li>
+<li>Meissner → sentuhan halus.</li>
+<li>Merkel → sentuhan/tekanan ringan.</li>
+<li>Pacini → tekanan/getaran.</li>
+<li>Ujung saraf bebas → nyeri.</li>
+<li>Ruffini & Krause → secara klasik dikaitkan dengan panas dan dingin.</li>
+</ul>
+
+</div>
+</section>
+
+
+<!-- QUIZ -->
+<section id="quiz" class="topic">
+
+<div class="card">
+<h2>📝 QUIZ MASTER IPA</h2>
+<p>Pilih jawaban yang menurutmu benar.</p>
+
+<div id="quizBox"></div>
+
+<div class="score">
+Skor Quiz: <span id="quizScore">0</span>
+</div>
+
+<button class="action" onclick="startQuiz()">🔄 Mulai Ulang Quiz</button>
+
+</div>
+</section>
+
+
+<!-- GAMES -->
+<section id="games" class="topic">
+
+<div class="card game">
+<h2>🎮 MINI GAME 1 — Tangkap Sel</h2>
+<p>Klik sel yang muncul sebanyak mungkin dalam 20 detik!</p>
+
+<p>⏱️ Waktu: <span id="timer">20</span></p>
+<p>⭐ Poin: <span id="cellScore">0</span></p>
+
+<button class="action" onclick="startCellGame()">▶️ Mulai</button>
+
+<div id="cellGame"></div>
+</div>
+
+
+<div class="card">
+<h2>🧠 MINI GAME 2 — Memory Indera</h2>
+<p>Cari pasangan simbol yang sama.</p>
+
+<div id="memoryGrid" class="memory-grid"></div>
+
+<p style="text-align:center">
+⭐ Poin: <span id="memoryScore">0</span>
+</p>
+
+<button class="action" onclick="startMemory()">🔄 Acak Lagi</button>
+</div>
+
+
+<div class="card">
+<h2>⚡ MINI GAME 3 — Benar atau Salah</h2>
+
+<p id="tfQuestion">Tekan tombol mulai.</p>
+
+<button class="action" onclick="answerTF(true)">BENAR</button>
+<button class="action" onclick="answerTF(false)">SALAH</button>
+
+<p id="tfResult"></p>
+<p>⭐ Skor: <span id="tfScore">0</span></p>
+</div>
+
+
+<div class="card">
+<h2>🧪 MINI GAME 4 — Laboratorium Tekanan</h2>
+
+<p>
+Sebuah gaya 100 N bekerja pada luas 0,5 m².
+Berapa tekanannya?
+</p>
+
+<button class="action" onclick="pressureGame(100)">100 Pa</button>
+<button class="action" onclick="pressureGame(200)">200 Pa</button>
+<button class="action" onclick="pressureGame(50)">50 Pa</button>
+
+<p id="pressureGameResult"></p>
+</div>
+
+
+<div class="card">
+<h2>🔐 HIDDEN GAME — Kode Rahasia</h2>
+
+<p>
+Ada kode tersembunyi di halaman ini.
+Coba klik emoji 🧬 pada judul website beberapa kali...
+</p>
+
+<p id="hiddenGameMessage"></p>
+</div>
+
+</section>
+
+</div>
+
+<footer>
+🧬 IPA Interactive Lab • Kelas 9 • Belajar + Bermain
+</footer>
+
+
+<script>
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showTopic(id){
+
+    document.querySelectorAll(".topic").forEach(x=>{
+        x.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+let totalScore = 0;
+
+function addScore(points){
+
+    totalScore += points;
+
+    document.getElementById("score").textContent = totalScore;
+
+    let progress = Math.min(totalScore,100);
+
+    document.getElementById("progress").style.width =
+        progress + "%";
+}
+
+
+/* =========================
+   PRESSURE CALCULATOR
+========================= */
+
+function calculatePressure(){
+
+    let F = Number(document.getElementById("force").value);
+    let A = Number(document.getElementById("area").value);
+
+    if(F<=0 || A<=0){
+        document.getElementById("pressureResult").textContent =
+            "Masukkan nilai yang benar.";
+        return;
+    }
+
+    let P = F/A;
+
+    document.getElementById("pressureResult").textContent =
+        "Tekanan = " + P + " Pa";
+
+    addScore(5);
+}
+
+
+/* =========================
+   QUIZ
+========================= */
+
+const questions = [
+
+{
+q:"Urutan metamorfosis sempurna yang benar adalah...",
+a:["Telur → Nimfa → Imago","Telur → Larva → Pupa → Imago","Telur → Pupa → Nimfa","Larva → Telur → Imago"],
+correct:1
+},
+
+{
+q:"Tahap embrionik yang berupa bola sel padat disebut...",
+a:["Blastula","Gastrula","Morula","Organogenesis"],
+correct:2
+},
+
+{
+q:"Sistem yang menghasilkan respons paling cepat terhadap rangsangan adalah...",
+a:["Sistem saraf","Sistem pencernaan","Sistem hormon","Sistem reproduksi"],
+correct:0
+},
+
+{
+q:"Organ penghasil sperma adalah...",
+a:["Ovarium","Uterus","Testis","Tuba falopi"],
+correct:2
+},
+
+{
+q:"Kemampuan tubuh menjaga kondisi internal tetap stabil disebut...",
+a:["Metamorfosis","Homeostasis","Organogenesis","Fertilisasi"],
+correct:1
+},
+
+{
+q:"Rumus tekanan pada zat padat adalah...",
+a:["P = F × A","P = A / F","P = F / A","P = F + A"],
+correct:2
+},
+
+{
+q:"Jika luas permukaan diperkecil sementara gaya tetap, tekanan akan...",
+a:["Berkurang","Tetap","Bertambah","Menjadi nol"],
+correct:2
+},
+
+{
+q:"Bagian mata yang mengatur besar-kecilnya pupil adalah...",
+a:["Retina","Iris","Kornea","Saraf optik"],
+correct:1
+},
+
+{
+q:"Bagian telinga yang mengubah getaran menjadi impuls saraf adalah...",
+a:["Koklea","Daun telinga","Gendang telinga","Tuba Eustachius"],
+correct:0
+},
+
+{
+q:"Reseptor yang menerima rangsang nyeri terdapat pada...",
+a:["Ujung saraf bebas","Koklea","Retina","Papila"],
+correct:0
+}
+
+];
+
+let quizIndex=0;
+let quizPoints=0;
+
+function startQuiz(){
+
+    quizIndex=0;
+    quizPoints=0;
+
+    document.getElementById("quizScore").textContent=0;
+
+    showQuestion();
+}
+
+function showQuestion(){
+
+    if(quizIndex>=questions.length){
+
+        document.getElementById("quizBox").innerHTML=
+        `<div class="info">
+        🎉 Quiz selesai!<br><br>
+        Skor kamu: <b>${quizPoints}</b> / ${questions.length}
+        </div>`;
+
+        addScore(quizPoints*2);
+
+        return;
+    }
+
+    let q=questions[quizIndex];
+
+    let html=
+    `<div class="quiz-question">
+    <h3>${quizIndex+1}. ${q.q}</h3>`;
+
+    q.a.forEach((answer,index)=>{
+
+        html+=
+        `<button class="option"
+        onclick="checkAnswer(${index},this)">
+        ${answer}
+        </button>`;
+
+    });
+
+    html+="</div>";
+
+    document.getElementById("quizBox").innerHTML=html;
+}
+
+function checkAnswer(index,button){
+
+    let q=questions[quizIndex];
+
+    document.querySelectorAll(".option").forEach(b=>{
+        b.disabled=true;
+    });
+
+    if(index===q.correct){
+
+        button.classList.add("correct");
+
+        quizPoints+=10;
+
+        document.getElementById("quizScore").textContent=
+            quizPoints;
+
+        addScore(10);
+
+    }else{
+
+        button.classList.add("wrong");
+
+        document.querySelectorAll(".option")[q.correct]
+        .classList.add("correct");
+    }
+
+    setTimeout(()=>{
+
+        quizIndex++;
+        showQuestion();
+
+    },700);
+}
+
+startQuiz();
+
+
+/* =========================
+   CELL GAME
+========================= */
+
+let cellTimer;
+let cellTime=20;
+let cellPoints=0;
+
+function startCellGame(){
+
+    clearInterval(cellTimer);
+
+    cellTime=20;
+    cellPoints=0;
+
+    document.getElementById("timer").textContent=cellTime;
+    document.getElementById("cellScore").textContent=cellPoints;
+
+    spawnCell();
+
+    cellTimer=setInterval(()=>{
+
+        cellTime--;
+
+        document.getElementById("timer").textContent=cellTime;
+
+        if(cellTime<=0){
+
+            clearInterval(cellTimer);
+
+            document.getElementById("cellGame").innerHTML=
+            `<h2 style="text-align:center;padding:120px 10px">
+            ⏰ Waktu habis!
+            </h2>`;
+
+            addScore(cellPoints);
+
+        }
+
+    },1000);
+}
+
+function spawnCell(){
+
+    let area=document.getElementById("cellGame");
+
+    area.innerHTML="";
+
+    let cell=document.createElement("div");
+
+    cell.className="cell";
+
+    cell.style.left=
+        Math.random()*(area.clientWidth-60)+"px";
+
+    cell.style.top=
+        Math.random()*(area.clientHeight-60)+"px";
+
+    cell.onclick=()=>{
+
+        cellPoints++;
+
+        document.getElementById("cellScore")
+        .textContent=cellPoints;
+
+        spawnCell();
+    };
+
+    area.appendChild(cell);
+}
+
+
+/* =========================
+   MEMORY GAME
+========================= */
+
+const memorySymbols=[
+"👁️","👁️",
+"👂","👂",
+"👃","👃",
+"👅","👅",
+"🖐️","🖐️",
+"🧠","🧠",
+"🧬","🧬",
+"⚡","⚡"
+];
+
+let memoryFirst=null;
+let memoryLock=false;
+let memoryMatched=0;
+
+function startMemory(){
+
+    let grid=document.getElementById("memoryGrid");
+
+    grid.innerHTML="";
+
+    memoryFirst=null;
+    memoryLock=false;
+    memoryMatched=0;
+
+    let cards=[...memorySymbols]
+    .sort(()=>Math.random()-.5);
+
+    cards.forEach(symbol=>{
+
+        let btn=document.createElement("button");
+
+        btn.className="memory-card";
+        btn.textContent="❓";
+
+        btn.onclick=()=>{
+
+            if(memoryLock || btn.classList.contains("open"))
+                return;
+
+            btn.classList.add("open");
+            btn.textContent=symbol;
+
+            if(!memoryFirst){
+
+                memoryFirst={
+                    btn:btn,
+                    symbol:symbol
+                };
